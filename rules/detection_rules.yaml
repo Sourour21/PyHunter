@@ -1,0 +1,24 @@
+﻿detection_rules:
+  port_scan:
+    enabled: true
+    description: "Detect multiple TCP connection attempts to different ports"
+    threshold: 10
+    window_seconds: 60
+    severity: HIGH
+    mitre_attack: "T1046"
+
+  ssh_bruteforce:
+    enabled: true
+    description: "Detect repeated failed SSH authentication attempts"
+    threshold: 5
+    window_seconds: 60
+    severity: HIGH
+    mitre_attack: "T1110"
+
+  suspicious_dns:
+    enabled: true
+    description: "Detect DNS queries containing high-entropy domain labels"
+    entropy_threshold: 3.5
+    minimum_label_length: 10
+    severity: MEDIUM
+    mitre_attack: "T1071.004"

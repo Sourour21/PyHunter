@@ -53,10 +53,16 @@ def read_evtx(evtx_path: str | Path) -> list[dict]:
 
                 status = "SUCCESS" if event_id == 4624 else "FAILED"
 
+                # Windows writes "-" (or nothing) when the logon has no
+                # network source, e.g. local or service logons.
+                source_ip = data.get("IpAddress")
+                if source_ip in (None, "", "-", "::1", "127.0.0.1"):
+                    source_ip = None
+
                 events.append({
                     "timestamp": timestamp,
                     "event_id": event_id,
-                    "source_ip": data.get("IpAddress"),
+                    "source_ip": source_ip,
                     "username": data.get("TargetUserName"),
                     "status": status,
                     "event_type": "WINDOWS_LOGIN",

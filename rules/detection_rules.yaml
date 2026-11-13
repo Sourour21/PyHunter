@@ -15,10 +15,20 @@
     severity: HIGH
     mitre_attack: "T1110"
 
+  windows_bruteforce:
+    enabled: true
+    description: "Detect repeated failed Windows logons (Event ID 4625)"
+    threshold: 5
+    window_seconds: 60
+    severity: HIGH
+    mitre_attack: "T1110"
+
   suspicious_dns:
     enabled: true
     description: "Detect DNS queries containing high-entropy domain labels"
+    # Max Shannon entropy of an n-character label is log2(n):
+    # a 3.5 threshold can only be reached by labels of 12+ characters.
     entropy_threshold: 3.5
-    minimum_label_length: 10
+    minimum_label_length: 12
     severity: MEDIUM
     mitre_attack: "T1071.004"

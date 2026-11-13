@@ -55,12 +55,13 @@ PyHunter follows a modular architecture:
 
 ## 4. Detection Rules and MITRE ATT&CK
 
-PyHunter implements three detection mechanisms:
+PyHunter implements four detection mechanisms:
 
 | Detection | Description | Severity | MITRE ATT&CK |
 |---|---|---|---|
 | Port Scan | Detects multiple TCP SYN attempts targeting different ports. | HIGH | T1046 |
 | SSH Brute Force | Detects repeated failed SSH authentication attempts. | HIGH | T1110 |
+| Windows Brute Force | Detects repeated failed Windows logons (Event ID 4625). | HIGH | T1110 |
 | Suspicious DNS | Detects DNS queries containing high-entropy domain labels. | MEDIUM | T1071.004 |
 
 Detection parameters are stored in `rules/detection_rules.yaml`.
@@ -186,7 +187,7 @@ The test suite covers:
 - IOC cache operations.
 - VirusTotal offline mode.
 
-The current test suite contains 16 automated tests.
+The current test suite contains 34 automated tests.
 
 ## 10. Incident Response Procedure
 

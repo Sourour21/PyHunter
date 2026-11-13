@@ -1,6 +1,6 @@
 ﻿import re
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 AUTHLOG_PATTERN = re.compile(
@@ -37,8 +37,14 @@ def read_authlog(log_path: str | Path, year: int | None = None) -> list[dict]:
     if not log_path.is_file():
         raise FileNotFoundError(f"Auth log file not found: {log_path}")
 
-    if year is None:
-        year = datetime.now().year
+    # auth.log lines carry no year. When it is not given, assume the
+    # current year, but roll back one year for dates in the future
+    # (e.g. a December log analysed in January).
+    infer_year = year is None
+    now = datetime.now()
+
+    if infer_year:
+        year = now.year
 
     events = []
 
@@ -59,6 +65,9 @@ def read_authlog(log_path: str | Path, year: int | None = None) -> list[dict]:
                 f"{header.group('time')}",
                 "%Y %b %d %H:%M:%S"
             )
+
+            if infer_year and timestamp > now + timedelta(days=1):
+                timestamp = timestamp.replace(year=year - 1)
 
             message = header.group("message")
 

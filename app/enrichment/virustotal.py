@@ -1,4 +1,5 @@
-﻿import os
+﻿import ipaddress
+import os
 
 import requests
 from dotenv import load_dotenv
@@ -10,6 +11,16 @@ load_dotenv()
 
 VT_API_URL = "https://www.virustotal.com/api/v3"
 REQUEST_TIMEOUT = 10
+
+
+def get_vt_endpoint(ioc: str) -> str:
+    """Return the VirusTotal API collection matching the IOC type."""
+
+    try:
+        ipaddress.ip_address(ioc)
+        return "ip_addresses"
+    except ValueError:
+        return "domains"
 
 
 class VirusTotalEnricher:
@@ -41,17 +52,10 @@ class VirusTotalEnricher:
 
         try:
             response = requests.get(
-                f"{VT_API_URL}/ip_addresses/{ioc}",
+                f"{VT_API_URL}/{get_vt_endpoint(ioc)}/{ioc}",
                 headers=headers,
                 timeout=REQUEST_TIMEOUT,
             )
-
-            if response.status_code == 404:
-                response = requests.get(
-                    f"{VT_API_URL}/domains/{ioc}",
-                    headers=headers,
-                    timeout=REQUEST_TIMEOUT,
-                )
 
             response.raise_for_status()
             data = response.json()
